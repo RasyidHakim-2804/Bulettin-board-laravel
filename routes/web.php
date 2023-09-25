@@ -45,7 +45,7 @@ Route::middleware('guest')->group(function(){
     Route::post('/login','login');
 
     //register
-    Route::get('/register','registerView')->name('register');
+    Route::get('/registration','registerView')->name('registration');
     Route::post('/register','register');
 
   });

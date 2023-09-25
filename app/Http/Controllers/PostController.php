@@ -25,14 +25,31 @@ class PostController extends Controller
         return view('post.create', ['posts' => $posts]);
     }
 
+    //controller for action
+    public function store(Request $request)
+    {
+        $message = $request->validate([
+            'post_contents' => 'required|min:10|max:200'
+        ]);
+
+        $post = new Post();
+        $post->posts_contents = $message['post_contents'];
+        $post->author_id      = Auth::user()->id;
+        $post->save();  
+
+        return redirect()->route('post')->with('message', 'Your message was created successfully');
+    }
+
+
     //edit view
     public function edit(int $id)
     {
         //cek apakah ada id seteleah /edit/
         if(!isset($id)) return redirect()->route('post');
 
-        $post    = Post::where('author_id', '=', Auth::user()->id)->findOrFail($id);
-        $message = $post->posts_contents;
+        $author_id = Auth::user()->id;
+        $post      = Post::where('author_id', '=', $author_id)->findOrFail($id);
+        $message   = $post->posts_contents;
         
         return view('post.edit', ['id'=> $id, 'message'=> $message]);
     }
@@ -49,22 +66,6 @@ class PostController extends Controller
         $post->save();
         
         return redirect()->route('post')->with('message', 'message updated successfully');
-    }
-
-
-    //controller for action
-    public function store(Request $request)
-    {
-        $message = $request->validate([
-            'post_contents' => 'required|min:10|max:200'
-        ]);
-
-        $post = new Post();
-        $post->posts_contents = $message['post_contents'];
-        $post->author_id      = Auth::user()->id;
-        $post->save();  
-
-        return redirect('/post')->with('message', 'Your message was created successfully');
     }
 
 

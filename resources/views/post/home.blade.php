@@ -25,6 +25,7 @@
     @guest
     <input type="button" value="Login" onclick="(function(){window.location = '/login'})()">
     @endguest
+    
     <input type="button" value="Post" onclick="(function(){window.location = '/post'})()">
   </div>
   <div>
