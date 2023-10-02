@@ -4,21 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  @include('bootstrap.link')
   <title>Register</title>
 </head>
-<body>
+<body class="bg-secondary">
   {{-- error --}}
-  <div class="error">
-    @if ($errors->any())
-      <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{$error}}</li>        
-        @endforeach
-      </ul>
-    @endif
+  @include('bootstrap.error')
+
+  <div class="position-absolute w-75 top-50 start-50 translate-middle shadow p-5 mb-5 bg-body-tertiary rounded">
+    <h3 class="mb-4 text-center">Registration</h3>
+    <form action="/register" method="POST">
+      @csrf
+      <div class="row mb-3">
+        <label for="user_name" class="form-label">Username</label>
+        <input type="text" name="user_name" class="form-control">
+      </div>
+      <div class="row mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" name="email" class="form-control">
+      </div>
+      <div class="row mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" placeholder="" class="form-control">  
+      </div>  
+      <div class="row mb-3 mt-3">
+        <input type="submit" name="submit" value="Submit" class="btn btn-primary mt-3">
+        <a href="/login" class="text-decoration-none d-inline-block mt-3 ml-0">Login</a>
+      </div>
+    </form>
   </div>
  
-  <div>
+  {{-- <div>
     <form action="/register" method="POST">
     @csrf
       <label for="user_name">Username</label>
@@ -32,6 +48,8 @@
       
       <input type="submit" name="submit" value="Submit">
     </form>
-  </div>
+  </div> --}}
+
+  @include('bootstrap.script')
 </body>
 </html>

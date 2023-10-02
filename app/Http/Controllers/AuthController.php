@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequest;
+use App\Jobs\ProcessRegistration;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +40,11 @@ class AuthController extends Controller
         $user->email     = $account['email'];
         $user->save();
 
-        return redirect()->route('login')->with(['status'=> TRUE]);
+        event(new Registered($user));
+        // ProcessRegistration::dispatch($user);
+        
+        Auth::login($user);
+        return redirect()->route('verification.notice');
     }
 
     public function login(Request $request)
@@ -54,7 +60,7 @@ class AuthController extends Controller
             return redirect('/post');
         }
 
-        return redirect()->route('login')->with('message', false);
+        return back()->withErrors('Your account is not authenticated,  please fill carefully')->withInput();
     }
 
     public function logout(Request $request)

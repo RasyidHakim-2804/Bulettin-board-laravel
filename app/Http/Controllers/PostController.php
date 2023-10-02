@@ -11,7 +11,9 @@ class PostController extends Controller
     //index view
     public function index()
     {
-        $posts = Post::with('author:id,user_name')->paginate(5);
+        $posts = Post::orderBy('id','DESC')
+                        ->with('author:id,user_name')
+                        ->paginate(8);
 
         return view('post.home', ['posts'=> $posts]);
     }
@@ -20,7 +22,9 @@ class PostController extends Controller
     public function create()
     {
         $authorId = Auth::user()->id;
-        $posts    = Post::orderBy('id','DESC')->where('author_id', '=',$authorId)->get();
+        $posts    = Post::orderBy('id','DESC')
+                            ->where('author_id', '=',$authorId)
+                            ->paginate(12);
 
         return view('post.create', ['posts' => $posts]);
     }
@@ -29,15 +33,19 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $message = $request->validate([
+            'title'         => 'required|max:100',
             'post_contents' => 'required|min:10|max:200'
         ]);
 
         $post = new Post();
+        $post->title       = $message['title'];
         $post->posts_contents = $message['post_contents'];
         $post->author_id      = Auth::user()->id;
         $post->save();  
 
-        return redirect()->route('post')->with('message', 'Your message was created successfully');
+        return redirect()
+                ->route('post')
+                ->with('message', 'Your message was created successfully');
     }
 
 
@@ -49,15 +57,21 @@ class PostController extends Controller
 
         $author_id = Auth::user()->id;
         $post      = Post::where('author_id', '=', $author_id)->findOrFail($id);
-        $message   = $post->posts_contents;
+        $title     = $post->title;
+        $content   = $post->posts_contents;
         
-        return view('post.edit', ['id'=> $id, 'message'=> $message]);
+        return view('post.edit', [
+            'id'     => $id, 
+            'content'=> $content, 
+            'title'  => $title
+        ]);
     }
 
     //action untuk update
     public function update(Request $request, int $id)
     {
         $message = $request->validate([
+            'title'         => 'required|max:100',
             'post_contents' => 'required|min:10|max:200'
         ]);
 
@@ -65,7 +79,9 @@ class PostController extends Controller
         $post->posts_contents = $message['post_contents'];
         $post->save();
         
-        return redirect()->route('post')->with('message', 'message updated successfully');
+        return redirect()
+                ->route('post')
+                ->with('message', 'message updated successfully');
     }
 
 

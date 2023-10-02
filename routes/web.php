@@ -1,8 +1,13 @@
 <?php
 
+use App\Mail\MyTestEmail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VerifyController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+ 
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +23,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PostController::class, 'index'])->name('home');
 Route::redirect('/home', '/');
 
-//user login
-Route::middleware('auth')->group(function(){
+// Route::get('/testEmail', function() {
 
-  Route::get('/logout',[AuthController::class, 'logout']);
+//   // The email sending is done using the to method on the Mail facade
+//   Mail::to('testreceiver@gmail.com’')->send(new MyTestEmail());
+// });
+
+
+//user login
+Route::middleware(['auth', 'verified'])->group(function(){
+
 
   Route::controller(PostController::class)->group(function(){
     //view
@@ -36,7 +47,9 @@ Route::middleware('auth')->group(function(){
 
 });
 
-//user not login
+Route::get('/logout',[AuthController::class, 'logout'])->middleware('auth');
+
+//guest user
 Route::middleware('guest')->group(function(){
 
   Route::controller(AuthController::class)->group(function(){
@@ -49,6 +62,20 @@ Route::middleware('guest')->group(function(){
     Route::post('/register','register');
 
   });
+
+});
+
+//verification route
+
+Route::controller(VerifyController::class)->group(function(){
+
+  Route::get('/email/verify','notice')
+  ->middleware('auth')
+  ->name('verification.notice');
+
+  Route::get('/email/verify/{id}/{hash}','verify')
+  ->middleware(['auth', 'signed'])
+  ->name('verification.verify');
 
 });
 

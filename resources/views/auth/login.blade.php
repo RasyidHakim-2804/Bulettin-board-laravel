@@ -5,29 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   {{-- bootstap --}}
-  {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> --}}
+  @include('bootstrap.link')
   <title>Login</title>
 </head>
 <body>
+  {{-- error --}}
+  @include('bootstrap.error')
+
   @hasSection ('status')
     <h3>Registration has been successful</h3>
   @endif
 
-  <form action="/login" method="POST" >
-    <div>
-      <label for="user_name">Username</label>
-      <input type="text" name="user_name">
+  <div class="container text-left border-primary p-5 mt-5 mb-5 position-relative shadow bg-body-tertiary rounded">
+    <div class="mx-auto mb-4">
+      <img src="https://img.icons8.com/ios-filled/50/1A1A1A/user-male-circle.png" 
+           alt="akun"
+           class="d-block mx-auto">
     </div>
-    <div>
-      <label for="password">Password</label>
-      <input type="password" name="password" placeholder="">  
-    </div>    
-    <input type="submit" name="submit" value="Submit" >
-    {{-- btn regis --}}
-  </form>
-  <input type="button" value="Registration" onclick="(function(){window.location = '/registration'})()">
+    <form action="/login" method="POST">
+      @csrf
+      <div class="row mb-3">
+        <label for="user_name" class="form-label">Username</label>
+        <input type="text" name="user_name" class="form-control">
+      </div>
+      <div class="row mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" placeholder="" class="form-control">  
+      </div>   
+      <div class="row mb-3">
+        <input type="submit" name="submit" value="Submit" class="btn btn-primary w-100">
+      </div>
+      <div class="row mb-3 d-flex">
+        <a href="/registration" class="text-decoration-none d-inline-block">Sign Up</a>
+        <a href="/home" class="text-decoration-none d-inline-block">Home</a>
+      </div>
+    </form>
+  </div>
+  
   
   {{-- bootstrap --}}
-  {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> --}}
+  @include('bootstrap.script')
 </body>
 </html>
