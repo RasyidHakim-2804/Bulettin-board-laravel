@@ -77,8 +77,8 @@
         <input type="text" name="title" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="post_content" class="from-label">Content:</label>
-        <textarea name="post_contents" rows="3" style="resize:none" class="form-control"></textarea>
+        <label for="body" class="from-label">Content:</label>
+        <textarea name="body" rows="3" style="resize:none" class="form-control"></textarea>
       </div>
       <input type="submit" name="submit" value="Submit" class="btn btn-primary">
       <input type="reset" value="Reset" class="btn btn-primary">
@@ -97,8 +97,8 @@
           <div class="card-body">
             <h5 class="card-title">Title: {{$post->title}}</h5>
             <h6 class="card-subtitle my-1 text-muted">Update At: {{date('d-m-Y', strtotime($post->updated_at))}}</h6>
-            <p class="card-text overflow-hidden" style="height: 6rem">{{$post->posts_contents}}</p>
-            <a href="/edit/{{$post->id}}" class="card-link text-decoration-none">Edit</a>
+            <p class="card-text overflow-hidden" style="height: 6rem">{{$post->body}}</p>
+            <a href="/edit/{{Auth::user()->id}}/post/{{$post->id}}" class="card-link text-decoration-none">Edit</a>
             <a href="/delete/{{$post->id}}" class="card-link text-decoration-none"  onclick="return confirm('Are you sure?')">Delete</a>
           </div>
         </div>

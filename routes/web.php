@@ -37,12 +37,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
   Route::controller(PostController::class)->group(function(){
     //view
     Route::get('/post', 'create')->name('post');
-    Route::get('/edit/{id}', 'edit')->name('edit');
+    Route::get('/edit/{user}/post/{post}', 'edit')->name('edit')->scopeBindings();
 
     //action crud
     Route::post('/post', 'store');
-    Route::post('/edit/{id}', 'update');
-    Route::get('/delete/{id}', 'delete');
+    Route::post('/edit/{post}', 'update');
+    Route::get('/delete/{post}', 'delete');
   });
 
 });

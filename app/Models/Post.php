@@ -13,11 +13,21 @@ class Post extends Model
     public $incrementing = false;
     
     protected $fillable = [
-        'posts_contents',
-        'author_id'
+        'title',
+        'body',
+        'user_id'
     ];
 
-    public function author(): BelongsTo
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($post){
+            $post->user_id = auth()->id();
+        });
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

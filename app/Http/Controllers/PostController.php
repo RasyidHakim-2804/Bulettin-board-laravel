@@ -2,93 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class PostController extends Controller
 {
-    //index view
+    //home view
     public function index()
     {
         $posts = Post::orderBy('id','DESC')
-                        ->with('author:id,user_name')
+                        ->with('user:id,user_name')
                         ->paginate(8);
 
         return view('post.home', ['posts'=> $posts]);
     }
 
-    //post view
+    //post/create view
     public function create()
     {
-        $authorId = Auth::user()->id;
-        $posts    = Post::orderBy('id','DESC')
-                            ->where('author_id', '=',$authorId)
-                            ->paginate(12);
+        $userId = auth()->id();
+        $posts  = Post::orderBy('id','DESC')
+                        ->where('user_id', '=',$userId)
+                        ->paginate(12);
 
         return view('post.create', ['posts' => $posts]);
     }
 
-    //controller for action
-    public function store(Request $request)
+    //edit view
+    public function edit(User $user,Post $post)
     {
-        $message = $request->validate([
-            'title'         => 'required|max:100',
-            'post_contents' => 'required|min:10|max:200'
-        ]);
+        if($user->id !== Auth::user()->id) abort(404);
 
-        $post = new Post();
-        $post->title       = $message['title'];
-        $post->posts_contents = $message['post_contents'];
-        $post->author_id      = Auth::user()->id;
-        $post->save();  
+        return view('post.edit', ['post' =>$post]);
+    }
 
+
+    /*
+    *controller for action
+    */
+
+    //store Post
+    public function store(PostRequest $request)
+    {
+        Post::create($request->validated());
+
+        // return dd($message);
         return redirect()
                 ->route('post')
                 ->with('message', 'Your message was created successfully');
     }
 
-
-    //edit view
-    public function edit(int $id)
+    //update Post
+    public function update(PostRequest $request, Post $post)
     {
-        //cek apakah ada id seteleah /edit/
-        if(!isset($id)) return redirect()->route('post');
-
-        $author_id = Auth::user()->id;
-        $post      = Post::where('author_id', '=', $author_id)->findOrFail($id);
-        $title     = $post->title;
-        $content   = $post->posts_contents;
-        
-        return view('post.edit', [
-            'id'     => $id, 
-            'content'=> $content, 
-            'title'  => $title
-        ]);
-    }
-
-    //action untuk update
-    public function update(Request $request, int $id)
-    {
-        $message = $request->validate([
-            'title'         => 'required|max:100',
-            'post_contents' => 'required|min:10|max:200'
-        ]);
-
-        $post                 = Post::find($id);
-        $post->posts_contents = $message['post_contents'];
+        $post->fill($request->validated());
         $post->save();
         
+        // return dd($message);
         return redirect()
                 ->route('post')
                 ->with('message', 'message updated successfully');
     }
 
-
-    public function delete(int $id)
+    //delete Post
+    public function delete(Post $post)
     {
-        $post = Post::find($id);
-
         $post->delete();
 
         return back()->with('message','Post successfully deleted');

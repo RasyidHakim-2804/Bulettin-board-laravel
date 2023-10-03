@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthRequest;
-use App\Jobs\ProcessRegistration;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -26,18 +25,12 @@ class AuthController extends Controller
 
 
     //controller for action
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $account = $request->validate([
-            'user_name' => 'required|unique:users,user_name',
-            'password'  => 'required',
-            'email'     => 'required|unique:users,email|email',
-        ]);
+        $account = $request->validated();
 
         $user = new User();
-        $user->user_name = $account['user_name'];
-        $user->password  = $account['password'];
-        $user->email     = $account['email'];
+        $user->fill($account);
         $user->save();
 
         event(new Registered($user));
@@ -47,12 +40,9 @@ class AuthController extends Controller
         return redirect()->route('verification.notice');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'user_name' => 'required',
-            'password'  => 'required',
-        ]);
+        $credentials = $request->validated();
 
         if(Auth::attempt($credentials)) {
             $request->session()->regenerate();

@@ -85,8 +85,8 @@
       <div class="card w-100" style="width: 18.5rem">
         <div class="card-body">
           <h5 class="card-title">Title: {{$post->title}}</h5>
-          <h6 class="card-subtitle my-1 text-muted">Author: {{$post->author->user_name}}</h6>
-          <p class="card-text overflow-hidden" style="height: 6rem">{{$post->posts_contents}}</p>
+          <h6 class="card-subtitle my-1 text-muted">Author: {{$post->user->user_name}}</h6>
+          <p class="card-text overflow-hidden" style="height: 6rem">{{$post->body}}</p>
           <h6 class="card-subtitle my-1 text-muted">Update At: {{date('d-m-Y', strtotime($post->updated_at))}}</h6>
         </div>
       </div>
