@@ -9,6 +9,16 @@
 <body>
   <h1>Verification email has sended.</h1>
   <h3>Please check your email</h3>
-  <p>click tihis url, if you already verified: <a href="/post">Post</a>, <a href="/home">Home</a>, <a href="/logout">Logout</a></p>
+  <p>click tihis url, if you already verified: 
+    <a href="/posts">Dashboard</a>, 
+    <a href="/home">Home</a>, 
+    <a href="/logout">Logout</a>
+  </p>
+  <form method="POST" action="{{ route('verification.send') }}">
+    <p>Still haven't gotten the email?</p>
+    @csrf <!-- Token CSRF -->
+    <button type="submit">Resend</button>
+  </form>
+
 </body>
 </html>

@@ -3,10 +3,11 @@
 use App\Mail\MyTestEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\VerifyController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Auth\VerifyController;
  
 
 /*
@@ -20,9 +21,6 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 |
 */
 
-Route::get('/', [PostController::class, 'index'])->name('home');
-Route::redirect('/home', '/');
-
 // Route::get('/testEmail', function() {
 
 //   // The email sending is done using the to method on the Mail facade
@@ -30,26 +28,23 @@ Route::redirect('/home', '/');
 // });
 
 
-//user login
-Route::middleware(['auth', 'verified'])->group(function(){
+//post
+Route::middleware('auth')->group(function(){
+  
+  Route::middleware('verified')->group(function(){
 
-
-  Route::controller(PostController::class)->group(function(){
-    //view
-    Route::get('/post', 'create')->name('post');
-    Route::get('/edit/{user}/post/{post}', 'edit')->name('edit')->scopeBindings();
-
-    //action crud
-    Route::post('/post', 'store');
-    Route::post('/edit/{post}', 'update');
-    Route::get('/delete/{post}', 'delete');
+    Route::resource('posts', PostController::class)->except('show');
+  
   });
+
+  Route::get('/', [HomeController::class, 'index'])->name('home');
+  Route::redirect('/home', '/');
+  Route::get('/logout',[AuthController::class, 'logout']);
 
 });
 
-Route::get('/logout',[AuthController::class, 'logout'])->middleware('auth');
 
-//guest user
+//guest 
 Route::middleware('guest')->group(function(){
 
   Route::controller(AuthController::class)->group(function(){
@@ -61,6 +56,18 @@ Route::middleware('guest')->group(function(){
     Route::get('/registration','registerView')->name('registration');
     Route::post('/register','register');
 
+  });
+
+  //reset password
+  Route::controller(ForgotPasswordController::class)->group(function(){
+    
+    //forgot-password
+    Route::get('/forgot-password', 'forgotPasswordView')->name('password.request');
+    Route::post('/forgot-password', 'sendLink')->name('password.email');
+
+    //reset password
+    Route::get('/reset-password/{token}', 'resetPasswordView')->name('password.reset');
+    Route::post('/reset-password', 'updatePassword')->name('password.update');
   });
 
 });
@@ -76,6 +83,10 @@ Route::controller(VerifyController::class)->group(function(){
   Route::get('/email/verify/{id}/{hash}','verify')
   ->middleware(['auth', 'signed'])
   ->name('verification.verify');
+
+  Route::post('/email/verification-notification', 'resend')
+  ->middleware(['auth', 'throttle:6,1'])
+  ->name('verification.send');
 
 });
 

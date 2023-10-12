@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Auth\Events\Registered;
@@ -47,10 +48,12 @@ class AuthController extends Controller
         if(Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect('/post');
+            return redirect()->route('home');
         }
 
-        return back()->withErrors('Your account is not authenticated,  please fill carefully')->withInput();
+        return back()
+        ->withErrors('Your account is not authenticated,  please fill carefully')
+        ->withInput();
     }
 
     public function logout(Request $request)
@@ -63,4 +66,5 @@ class AuthController extends Controller
      
         return redirect()->route('login');
     }
+
 }

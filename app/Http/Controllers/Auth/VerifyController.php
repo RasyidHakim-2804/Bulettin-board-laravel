@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class VerifyController extends Controller
@@ -16,6 +17,13 @@ class VerifyController extends Controller
     {
         $request->fulfill();
  
-        return redirect()->route('post');
+        return redirect('/');
+    }
+
+    public function resend(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
+ 
+        return back()->with('message', 'Verification link sent!');
     }
 }

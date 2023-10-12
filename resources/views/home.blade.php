@@ -7,10 +7,11 @@
   @include('bootstrap.link')
   <title>Home</title>
 </head>
-<body class="bg-secondary">
+<body style=" background-color:#bab7b7">
   {{-- navbar --}}
 
-  <!-- Navbar -->
+  @include('bootstrap.navbar', ['dashboard'=> true])
+  {{-- <!-- Navbar -->
   <nav class="navbar navbar-expand-lg sticky-top bg-primary b-3">
     <!-- Container wrapper -->
     <div class="container">
@@ -43,7 +44,7 @@
         <!-- Left links -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link text-light" href="/post">Dashboard</a>
+            <a class="nav-link text-light" href="/posts">Dashboard</a>
           </li>
         </ul>
         <!-- Left links -->
@@ -62,11 +63,11 @@
     </div>
     <!-- Container wrapper -->
   </nav>
-<!-- Navbar -->
+<!-- Navbar --> --}}
 
 {{-- end navbar --}}
 <div class="container my-4">
-  <div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="row row-cols-1 row-cols-md-1 g-2">
     @if ($posts->all() === [])
     <div class="col">
       <div class="card w-100" style="width: 18.5rem">

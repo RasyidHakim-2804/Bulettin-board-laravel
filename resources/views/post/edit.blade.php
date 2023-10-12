@@ -14,7 +14,8 @@
 
   {{-- form --}}
   <div  class="container text-left border-primary p-3 mt-5 w-75">
-    <form action="/edit/{{$post->id}}" method="post" class="shadow p-4 mb-3 bg-body-tertiary rounded">
+    <form action="/posts/{{$post->id}}" method="post" class="shadow p-4 mb-3 bg-body-tertiary rounded">
+      @method('PUT')
       @csrf
       <div class="mb-5">
         <h3>Edit</h3>
@@ -37,7 +38,7 @@
   
   <script>
     function toPost() {
-      window.location = '/post';
+      window.location = '/posts';
     }
   </script>
   @include('bootstrap.script')

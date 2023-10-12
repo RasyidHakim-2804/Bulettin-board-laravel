@@ -11,24 +11,30 @@
 <body>
   {{-- error --}}
   @include('bootstrap.error')
-  @include('bootstrap.success')
 
   <div class="container text-left border-primary p-5 mt-5 mb-5 position-relative shadow bg-body-tertiary rounded">
     <div class="mx-auto mb-4">
       <img src="https://img.icons8.com/ios-filled/50/1A1A1A/user-male-circle.png" 
            alt="akun"
            class="d-block mx-auto">
-      <h2 class="d-block text-center">Login</h2>
+      <h2 class="d-block text-center">Reset Password</h2>
     </div>
-    <form action="/login" method="POST">
+    <form action="{{route('password.update')}}" method="POST">
       @csrf
       <div class="row mb-3">
-        <label for="user_name" class="form-label">Username</label>
-        <input type="text" name="user_name" class="form-control">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" name="email" class="form-control">
       </div>
       <div class="row mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" name="password" placeholder="" class="form-control">  
+        <input type="text" name="password" placeholder="" class="form-control">  
+      </div>   
+      <div class="row mb-3">
+        <label for="password_confirmation" class="form-label">Password Confirmation</label>
+        <input type="text" name="password_confirmation" placeholder="" class="form-control">  
+      </div>
+      <div class="row mb-3 visually-hidden">
+        <input type="hidden" name="token" value="{{$token}}" class="form-control">  
       </div>   
       <div class="row mb-3">
         <input type="submit" name="submit" value="Submit" class="btn btn-primary w-100">

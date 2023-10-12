@@ -12,7 +12,12 @@
   @include('bootstrap.error')
 
   <div class="position-absolute w-75 top-50 start-50 translate-middle shadow p-5 mb-5 bg-body-tertiary rounded">
-    <h3 class="mb-4 text-center">Registration</h3>
+    <div class="mx-auto mb-4">
+      <img src="https://img.icons8.com/ios-filled/50/1A1A1A/user-male-circle.png" 
+           alt="akun"
+           class="d-block mx-auto">
+      <h2 class="d-block text-center">Registration</h2>
+    </div>
     <form action="/register" method="POST">
       @csrf
       <div class="row mb-3">
@@ -25,7 +30,7 @@
       </div>
       <div class="row mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" name="password" placeholder="" class="form-control">  
+        <input type="text" name="password" placeholder="" class="form-control">  
       </div>  
       <div class="row mb-3 mt-3">
         <input type="submit" name="submit" value="Submit" class="btn btn-primary mt-3">
