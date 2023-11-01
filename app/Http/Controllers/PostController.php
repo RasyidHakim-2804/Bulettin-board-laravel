@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -13,10 +12,10 @@ class PostController extends Controller
     //home view
     public function index()
     {
-        $userId = auth()->id();
-        $posts  = Post::orderBy('id','DESC')
-                        ->where('user_id', '=',$userId)
-                        ->paginate(12);
+        $posts = User::find(auth()->id())
+            ->posts()
+            ->latest()
+            ->paginate(12);
 
         return view('post.dashboard', ['posts' => $posts]);
     }
@@ -30,14 +29,33 @@ class PostController extends Controller
     //edit view
     public function edit(Post $post)
     {
-        if($post->user_id !== Auth::user()->id) abort(404);
+        //tidak akan menampilkan page jika user bukan pemilik post
+        if ($post->user_id !== Auth::user()->id) abort(404);
 
-        return view('post.edit', ['post' =>$post]);
+        $photo = $post->photo->title ?? false;
+
+        return view('post.edit', [
+            'id'    => $post->id,
+            'title' => $post->title,
+            'body'  => $post->body,
+            'photo' => $photo,
+        ]);
     }
 
-    public function show()
+    //detail view
+    public function show(Post $post)
     {
-        
+        return view('detail', [
+            'post'  => [
+                'id'         => $post->id,
+                'title'      => $post->title,
+                'user_name'  => $post->user->user_name,
+                'updated_at' => $post->updated_at,
+                'body'       => $post->body,
+            ],
+            'photo' =>  $post->photo->title ?? null,
+            'comments' => (new CommentController)->index($post), //mengambil komen collection
+        ]);
     }
 
 
@@ -48,30 +66,61 @@ class PostController extends Controller
     //store Post
     public function store(PostRequest $request)
     {
-        Post::create($request->validated());
+        $request->validated();
 
-        // return dd($message);
+        $post = Post::create($request->safe()->only(['title', 'body']));
+
+        if (isset($request['image'])) {
+
+            $image = $request->file('image');
+
+            (new PhotoController)->store($image, $post->id);
+        }
+
         return redirect('/posts')
-                ->with('message', 'Your message was created successfully');
+            ->with('message', 'Your message was created successfully');
     }
 
     //update Post
     public function update(PostRequest $request, Post $post)
     {
+        //cek apakah post ini milik user?
         if ($post->user_id !== Auth::user()->id) abort(404);
 
-        $post->update($request->validated());
-        
+        $request->validated();
+
+        //update post
+        $post->update($request->safe()->only(['title', 'body']));
+
+        //update photo jika ada
+        if (isset($request['image'])) {
+
+            $photo = new PhotoController();
+            $fileImage = $request->file('image');
+
+            if ($post->photo === null) { //jika post sebelumnya tidak memilki image
+
+                $photo->store($fileImage, $post->id);
+
+            } else { //jika post sebelumnya sudah memilki image
+
+                $photo->update($fileImage, $post->photo);
+            }
+        }
+
         return redirect('/posts')
-                ->with('message', 'message updated successfully');
+            ->with('message', 'message updated successfully');
     }
 
     //delete Post
     public function destroy(Post $post)
     {
+        if ($post->photo !== null) {
+            (new PhotoController)->destroy($post->photo);
+        }
+
         $post->delete();
 
-        return back()->with('message','Post successfully deleted');
+        return back()->with('message', 'Post successfully deleted');
     }
-
 }

@@ -8,7 +8,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Auth\VerifyController;
- 
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,38 +29,36 @@ use App\Http\Controllers\Auth\VerifyController;
 
 
 //post
-Route::middleware('auth')->group(function(){
-  
-  Route::middleware('verified')->group(function(){
+Route::middleware('auth')->group(function () {
 
-    Route::resource('posts', PostController::class)->except('show');
-  
+  Route::middleware('verified')->group(function () {
+
+    Route::resource('posts', PostController::class);
+    Route::resource('comments', CommentController::class);
   });
 
   Route::get('/', [HomeController::class, 'index'])->name('home');
   Route::redirect('/home', '/');
-  Route::get('/logout',[AuthController::class, 'logout']);
-
+  Route::get('/logout', [AuthController::class, 'logout']);
 });
 
 
 //guest 
-Route::middleware('guest')->group(function(){
+Route::middleware('guest')->group(function () {
 
-  Route::controller(AuthController::class)->group(function(){
+  Route::controller(AuthController::class)->group(function () {
     //login
-    Route::get('/login','loginView')->name('login');
-    Route::post('/login','login');
+    Route::get('/login', 'loginView')->name('login');
+    Route::post('/login', 'login');
 
     //register
-    Route::get('/registration','registerView')->name('registration');
-    Route::post('/register','register');
-
+    Route::get('/registration', 'registerView')->name('registration');
+    Route::post('/register', 'register');
   });
 
   //reset password
-  Route::controller(ForgotPasswordController::class)->group(function(){
-    
+  Route::controller(ForgotPasswordController::class)->group(function () {
+
     //forgot-password
     Route::get('/forgot-password', 'forgotPasswordView')->name('password.request');
     Route::post('/forgot-password', 'sendLink')->name('password.email');
@@ -69,25 +67,21 @@ Route::middleware('guest')->group(function(){
     Route::get('/reset-password/{token}', 'resetPasswordView')->name('password.reset');
     Route::post('/reset-password', 'updatePassword')->name('password.update');
   });
-
 });
 
 //verification route
 
-Route::controller(VerifyController::class)->group(function(){
+Route::controller(VerifyController::class)->group(function () {
 
-  Route::get('/email/verify','notice')
-  ->middleware('auth')
-  ->name('verification.notice');
+  Route::get('/email/verify', 'notice')
+    ->middleware('auth')
+    ->name('verification.notice');
 
-  Route::get('/email/verify/{id}/{hash}','verify')
-  ->middleware(['auth', 'signed'])
-  ->name('verification.verify');
+  Route::get('/email/verify/{id}/{hash}', 'verify')
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
 
   Route::post('/email/verification-notification', 'resend')
-  ->middleware(['auth', 'throttle:6,1'])
-  ->name('verification.send');
-
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
 });
-
-

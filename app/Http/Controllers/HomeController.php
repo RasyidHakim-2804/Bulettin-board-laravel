@@ -9,10 +9,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $posts = Post::orderBy('id','DESC')
-                        ->with('user:id,user_name')
-                        ->paginate(8);
+        $posts = Post::latest()
+            ->with('user:id,user_name')
+            ->paginate(8);
 
-        return view('home', ['posts'=> $posts]);
+        return view('home', ['posts' => $posts]);
     }
 }

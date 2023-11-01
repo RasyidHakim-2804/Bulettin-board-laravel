@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg sticky-top bg-primary b-3">
+<nav class="navbar navbar-expand-lg sticky-top bg-white b-3">
   <!-- Container wrapper -->
   <div class="container">
     <!-- Navbar brand -->
@@ -22,22 +22,19 @@
       <!-- Left links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link text-light" href="https://www.youtube.com/watch?v=xvFZjo5PgG0">Post</a>
-        </li>
-        @if ($dashboard)
-        <li class="nav-item">
-          <a class="nav-link text-light" href="/posts">Dashboard</a>
-        </li>
-        @elseif (!$dashboard)
-        <li class="nav-item">
-          <a class="nav-link text-light" href="/">Home</a>
+          <a class="nav-link text-dangger" href="https://www.youtube.com/watch?v=xvFZjo5PgG0">Post</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-light" href="/posts/create">Create</a>
+          <a class="nav-link text-dangger" href="/posts">Dashboard</a>
         </li>
-        @endif
         <li class="nav-item">
-          <a class="nav-link text-light" href="/logout">Logout</a>
+          <a class="nav-link text-dangger" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dangger" href="/posts/create">Create</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn bg-danger text-white" href="/logout">Logout</a>
         </li>
       </ul>
     </div>
