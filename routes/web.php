@@ -35,10 +35,11 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('posts', PostController::class);
     Route::resource('comments', CommentController::class);
+  
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::redirect('/home', '/');
   });
 
-  Route::get('/', [HomeController::class, 'index'])->name('home');
-  Route::redirect('/home', '/');
   Route::get('/logout', [AuthController::class, 'logout']);
 });
 

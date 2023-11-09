@@ -23,7 +23,7 @@ class CommentController extends Controller
      */
     public function create()
     {
-        //
+        abort(404);
     }
 
     /**
@@ -31,6 +31,7 @@ class CommentController extends Controller
      */
     public function store(CommentRequest $request)
     {
+        // return 'halo kocak';
         if (Comment::create($request->validated())) {
             return back()->with('message', 'Your comment was created successfully');
         } else {
@@ -43,7 +44,7 @@ class CommentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -51,15 +52,19 @@ class CommentController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        abort(404);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CommentRequest $request, string $id)
+    public function update(CommentRequest $request, Comment $comment)
     {
-        //
+        $request->validated();
+
+        $comment->update($request->safe()->only(['body']));
+
+        return back()->with('message', 'Your comment successfully updated');
     }
 
     /**

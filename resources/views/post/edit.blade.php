@@ -24,35 +24,110 @@
             </div>
             <div class="mb-3">
                 <label for="title" class="from-label">Title:</label>
-                <input type="text" name="title" class="form-control" value="{{ $title }}">
+                <input type="text" name="title" id="title" class="form-control" value="{{ $title }}">
             </div>
             <div class="mb-3">
                 <label for="post_contents" class="from-label">Content:</label>
-                <textarea name="body" rows="5" style="resize:none" class="form-control">{{ $body }}</textarea>
+                <textarea name="body" id="body" rows="5" style="resize:none" class="form-control">{{ $body }}</textarea>
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Image: </label>
-                <input class="form-control" type="file" id="input-image" name="image">
+                <input class="form-control" type="file" id="inputImage" name="image"
+                    accept="image/png, image/gif, image/jpeg">
+                <p>Your image:</p>
                 @if ($photo)
-                    <p>Your image:</p>
-                    <img src="/storage/user/post/{{ $photo }}" alt="" class="img-fluid" id="myImage">
+                    <img src="/storage/user/post/{{ $photo }}" alt="oldImage" class="img-fluid" id="oldImage">
+                    <input type="hidden" name="deleteOldImage" id="deleteOldImage" value="false">
                 @endif
+                <img src="" alt="preview" class="img-fluid" id="previewImage" style="visibility: hidden;">
             </div>
             <div class="mb-3">
-                <input type="submit" class="btn btn-success" name="submit" value="Submit">
-                <input type="reset"  class="btn btn-warning"  value="Reset">
-                <input type="button" class="btn btn-warning" onclick="deleteImage()" value="Delete Image">
+                <input type="submit" class="btn btn-primary" name="submit" value="Simpan">
+                <input type="button" class="btn btn-warning" value="Reset" onclick="balik()">
+                <input type="button" class="btn btn-warning" onclick="funcDeleteImage()" value="Delete Image">
                 <a href="/posts" class="btn btn-danger">Cancel</a>
             </div>
         </form>
     </div>
 
-    <script>
-        function deleteImage() {
-            document.getElementById("myImage").src = '';
-        }
-        
-    </script>
+    {{-- script --}}
+    @if ($photo)
+        <script>
+            document.getElementById('inputImage').onchange = evt => {
+                const [file] = document.getElementById('inputImage').files;
+                if (file) {
+                    document.getElementById("oldImage").style.visibility = "hidden";
+                    document.getElementById("oldImage").src = '';
+
+                    document.getElementById("previewImage").style.visibility = "visible";
+                    document.getElementById('previewImage').src = URL.createObjectURL(file);
+
+                    document.getElementById("deleteOldImage").value = "false";
+                }
+            }
+
+            function balik() {
+                document.getElementById("oldImage").style.visibility = "visible";
+                document.getElementById("oldImage").src = "/storage/user/post/{{ $photo }}";
+
+                document.getElementById("previewImage").style.visibility = "hidden";
+                document.getElementById("previewImage").src = '';
+
+                document.getElementById('inputImage').value = '';
+
+                var parser = new DOMParser();
+                var body = parser.parseFromString("{{$body}}", "text/html").body.textContent;
+                var title = parser.parseFromString("{{$title}}", "text/html").body.textContent;
+
+                document.getElementById("title").value = title;
+                document.getElementById("body").value = body;
+                document.getElementById("deleteOldImage").value = "false";
+            }
+
+            function funcDeleteImage() {
+                document.getElementById("oldImage").style.visibility = "hidden";
+                document.getElementById("oldImage").src = '';
+
+                document.getElementById("previewImage").src = '';
+                document.getElementById("previewImage").style.visibility = "hidden";
+
+                document.getElementById('inputImage').value = '';
+                document.getElementById("deleteOldImage").value = "true";
+            }
+        </script>
+    @else
+        <script>
+            document.getElementById('inputImage').onchange = evt => {
+                const [file] = document.getElementById('inputImage').files;
+                if (file) {
+                    document.getElementById("previewImage").style.visibility = "visible";
+                    document.getElementById('previewImage').src = URL.createObjectURL(file);
+                }
+            }
+
+            function balik() {
+
+                document.getElementById("previewImage").style.visibility = "hidden";
+                document.getElementById("previewImage").src = '';
+
+                document.getElementById('inputImage').value = '';
+
+                var parser = new DOMParser();
+                var body = parser.parseFromString("{{$body}}", "text/html").body.textContent;
+                var title = parser.parseFromString("{{$title}}", "text/html").body.textContent;
+
+                document.getElementById("title").value = title;
+                document.getElementById("body").value = body;
+            }
+
+            function funcDeleteImage() {
+                document.getElementById("previewImage").src = '';
+                document.getElementById("previewImage").style.visibility = "hidden";
+
+                document.getElementById('inputImage').value = '';
+            }
+        </script>
+    @endif
     @include('bootstrap.script')
 </body>
 

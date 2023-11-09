@@ -11,7 +11,7 @@
 
 <body style=" background-color:#bab7b7">
     {{-- navbar --}}
-    @include('bootstrap.navbar', ['dashboard' => true])
+    @include('bootstrap.navbar', ['home' => true])
     {{-- end navbar --}}
 
     <div class="container my-4">

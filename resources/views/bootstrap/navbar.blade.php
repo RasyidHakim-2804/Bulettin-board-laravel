@@ -25,13 +25,13 @@
           <a class="nav-link text-dangger" href="https://www.youtube.com/watch?v=xvFZjo5PgG0">Post</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dangger" href="/posts">Dashboard</a>
+          <a class="nav-link @isset($dashboard) {{'text-danger fw-bold'}} @endisset" href="/posts">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dangger" href="/">Home</a>
+          <a class="nav-link @isset($home) {{'text-danger fw-bold'}} @endisset" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dangger" href="/posts/create">Create</a>
+          <a class="nav-link @isset($create) {{'text-danger fw-bold'}} @endisset" href="/posts/create">Create</a>
         </li>
         <li class="nav-item">
           <a class="btn bg-danger text-white" href="/logout">Logout</a>

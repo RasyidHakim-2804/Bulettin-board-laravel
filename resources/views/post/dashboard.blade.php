@@ -10,7 +10,7 @@
 
 <body style=" background-color:#bab7b7">
 
-    {{-- navbar --}}@include('bootstrap.navbar', ['dashboard' => false])
+    {{-- navbar --}}@include('bootstrap.navbar', ['dashboard' => true])
 
     {{-- error --}}@include('bootstrap.error')
 

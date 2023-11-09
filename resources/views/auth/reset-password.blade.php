@@ -40,7 +40,6 @@
         <input type="submit" name="submit" value="Submit" class="btn btn-primary w-100">
       </div>
       <div class="row mb-3 d-flex">
-        <a href="/registration" class="text-decoration-none d-inline-block">Sign Up</a>
         <a href="/forgot-password" class="text-decoration-none d-inline-block">Forgot password?</a>
       </div>
     </form>

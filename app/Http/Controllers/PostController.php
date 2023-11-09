@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -48,13 +49,14 @@ class PostController extends Controller
         return view('detail', [
             'post'  => [
                 'id'         => $post->id,
+                'user_id'    => $post->user->id,
                 'title'      => $post->title,
                 'user_name'  => $post->user->user_name,
                 'updated_at' => $post->updated_at,
                 'body'       => $post->body,
             ],
             'photo' =>  $post->photo->title ?? null,
-            'comments' => (new CommentController)->index($post), //mengambil komen collection
+            'comments' => $post->comments()->latest()->get(), //mengambil komen collection
         ]);
     }
 
@@ -82,7 +84,7 @@ class PostController extends Controller
     }
 
     //update Post
-    public function update(PostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
         //cek apakah post ini milik user?
         if ($post->user_id !== Auth::user()->id) abort(404);
@@ -95,17 +97,28 @@ class PostController extends Controller
         //update photo jika ada
         if (isset($request['image'])) {
 
-            $photo = new PhotoController();
+            $photoController = new PhotoController();
             $fileImage = $request->file('image');
 
             if ($post->photo === null) { //jika post sebelumnya tidak memilki image
 
-                $photo->store($fileImage, $post->id);
+                $photoController->store($fileImage, $post->id);
 
             } else { //jika post sebelumnya sudah memilki image
 
-                $photo->update($fileImage, $post->photo);
+                $photoController->update($fileImage, $post->photo);
             }
+
+            $post->updated_at = now();
+            $post->save();
+        }
+
+        // delete oldImage
+        if( isset($request['deleteOldImage']) && $request['deleteOldImage'] === 'true') {
+
+            (new PhotoController)->destroy($post->photo);
+            $post->updated_at = now();
+            $post->save();
         }
 
         return redirect('/posts')
@@ -115,9 +128,9 @@ class PostController extends Controller
     //delete Post
     public function destroy(Post $post)
     {
-        if ($post->photo !== null) {
-            (new PhotoController)->destroy($post->photo);
-        }
+        if ($post->photo) (new PhotoController)->destroy($post->photo);
+        
+        if($post->comments) $post->comments->delete();
 
         $post->delete();
 
